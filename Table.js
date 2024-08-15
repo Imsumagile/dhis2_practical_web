@@ -1,5 +1,36 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
+const App = () => {
+  const [dataElements, setDataElements] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get(
+          'https://trainings.dhis2.co.tz/api/dataElements.json?fields=id,name,formName,valueType,domainType&filter=domainType:eq:AGGREGATE',
+          {
+            auth: {
+              username: 'developer',
+              password: 'Developer@123'
+            }
+          }
+        );
+        setDataElements(result.data.dataElements);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="App">
+      <h1>Data Capture Form</h1>
+      <Table dataElements={dataElements} />
+    </div>
+  );
+};
 
 const Table = ({ dataElements }) => {
   const [values, setValues] = useState({});
@@ -45,4 +76,4 @@ const Table = ({ dataElements }) => {
   );
 };
 
-export default Table;
+export default App;
